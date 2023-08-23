@@ -1,8 +1,7 @@
-chrome.tabs.query({ active: true, currentWindow: true }, async function(tabs) {
-    const url = tabs[0].url;
-
-    // Use the URL to check with Google Safe Browsing (You'll need an API key)
-    // Update this part with actual Safe Browsing API integration
+chrome.runtime.onMessage.addListener(async function(request, sender, sendResponse) {
+  if (request.action === "updateStatus") {
+    // Perform the check and update the popup interface
+    // You'll need to integrate with Google Safe Browsing API here
     const apiKey = "AIzaSyDwUd1YfAGyX4Sk2e2OCSzq6CeN7YCrXA8";
     const apiEndpoint = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${apiKey}`;
 
@@ -25,6 +24,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, async function(tabs) {
     const data = await response.json();
     const isSafe = JSON.stringify(data) === '{}';
 
-    const statusElement = document.getElementById("status");
-    statusElement.textContent = isSafe ? "Safe website" : "Potentially harmful website";
+    sendResponse({ isSafe });
+  }
 });
